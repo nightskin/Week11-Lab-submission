@@ -2,17 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Systems.HealthSystems;
+using System;
 
 public class HealthComponent : MonoBehaviour , IDamagable
 {
     public float health => currentHealth;
-    public float maxHealth => baseHealth;
+    public float maxHealth => totalHealth;
 
     [SerializeField] private float currentHealth;
-    [SerializeField] private float baseHealth;
-    protected virtual void Start()
+    [SerializeField] private float totalHealth;
+    protected virtual void Awake()
     {
-        currentHealth = baseHealth;
+        currentHealth = totalHealth;
+    }
+
+    internal void HealPlayer(int effect)
+    {
+        if(currentHealth < maxHealth && currentHealth > 0)
+        {
+            currentHealth += effect;
+            if (currentHealth <= 0)
+            {
+                //Destroy();
+            }
+        }
+
+    }
+
+    public virtual void Destroy()
+    {
+        Destroy(gameObject);
     }
 
     public virtual void TakeDamage(float dmg)
@@ -24,9 +43,6 @@ public class HealthComponent : MonoBehaviour , IDamagable
         }
     }
 
-    public virtual void Destroy()
-    {
-        Destroy(gameObject);
-    }
+
 
 }

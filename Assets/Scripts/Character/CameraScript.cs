@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace Character
 {
-   public class CameraScript : InputMonoBehaviour
+   public class CameraScript : InputMonoBehaviour, IPausable
    {
       [SerializeField] private float RotationPower = 10;
       [SerializeField] private float HorizontalDamping = 1;
@@ -19,16 +19,17 @@ namespace Character
          FollowTargetTransform = FollowTarget.transform;
       }
       
+
       private void OnLooked(InputAction.CallbackContext obj)
       {
          Vector2 aimValue = obj.ReadValue<Vector2>();
-
+         
          Quaternion addedRotation = Quaternion.AngleAxis(
             Mathf.Lerp(PreviousMouseDelta.x, aimValue.x, 1f / HorizontalDamping) * RotationPower,
             transform.up);
-
+         
          FollowTargetTransform.rotation *= addedRotation;
-
+         
          PreviousMouseDelta = aimValue;
          
          transform.rotation = Quaternion.Euler(0, FollowTargetTransform.rotation.eulerAngles.y, 0);
@@ -49,8 +50,16 @@ namespace Character
          GameInput.PlayerActionMap.Look.performed -= OnLooked;
    
       }
-      
-         
-   }
+
+       public void PauseGame()
+        {
+            GameInput.PlayerActionMap.Look.performed -= OnLooked;
+        }
+
+       public void UnPauseGame()
+        {
+            GameInput.PlayerActionMap.Look.performed += OnLooked;
+        }
+    }
 }
    

@@ -5,9 +5,8 @@ using UnityEngine;
 public class PlayerHP : HealthComponent
 {
 
-    protected override void Start()
+    protected void Start()
     {
-        base.Start();
         PlayerEvents.Invoke_OnPlayerHealthSet(this);
     }
 

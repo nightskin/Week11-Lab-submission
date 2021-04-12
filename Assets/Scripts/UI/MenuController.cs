@@ -100,7 +100,10 @@ public class MenuController : MonoBehaviour
         EnableMenu(StartMenu);
     }
 
-    
+    private void Awake()
+    {
+        AppEvents.Invoke_OnMouseCursorEnable(true);
+    }
 }
 
 

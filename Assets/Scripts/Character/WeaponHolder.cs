@@ -10,12 +10,35 @@ namespace Character
     public class WeaponHolder : InputMonoBehaviour
     {
         [Header("Weapon To Spawn"), SerializeField]
-        private GameObject WeaponToSpawn;
+        private WeaponItem WeaponToSpawn;
 
         [SerializeField] private Transform WeaponSocketLocation;
 
         private Transform GripIKLocation;
         private bool WasFiring = false;
+
+        internal void EquipWeapon(WeaponItem weaponItem)
+        {
+            GameObject spawnedWeapon = Instantiate(weaponItem.itemPrefab, WeaponSocketLocation.position, WeaponSocketLocation.rotation, WeaponSocketLocation);
+            if (!spawnedWeapon) return;
+
+            EquippedWeapon = spawnedWeapon.GetComponent<WeaponComponent>();
+            if (!EquippedWeapon) return;
+
+            EquippedWeapon.Initialize(this, weaponItem);
+
+            PlayerEvents.Invoke_OnWeaponEquipped(EquippedWeapon);
+
+            GripIKLocation = EquippedWeapon.GripLocation;
+            PlayerAnimator.SetInteger(WeaponTypeHash, (int)EquippedWeapon.WeaponInformation.WeaponType);
+        }
+
+        internal void UnEquipWeapon()
+        {
+            Destroy(EquippedWeapon.gameObject);
+            EquippedWeapon = null;
+        }
+
         private bool FiringPressed = false;
         
         //Components
@@ -50,22 +73,6 @@ namespace Character
             ViewCamera = Camera.main;
         }
 
-        // Start is called before the first frame update
-        void Start()
-        {
-            GameObject spawnedWeapon = Instantiate(WeaponToSpawn, WeaponSocketLocation.position, WeaponSocketLocation.rotation, WeaponSocketLocation);
-            if (!spawnedWeapon) return;
-            
-            EquippedWeapon = spawnedWeapon.GetComponent<WeaponComponent>();
-            if (!EquippedWeapon) return;
-            
-            EquippedWeapon.Initialize(this, PlayerCrosshair);
-            
-            PlayerEvents.Invoke_OnWeaponEquipped(EquippedWeapon);
-            
-            GripIKLocation = EquippedWeapon.GripLocation;
-            PlayerAnimator.SetInteger(WeaponTypeHash, (int)EquippedWeapon.WeaponInformation.WeaponType);
-        }
 
         private void OnAnimatorIK(int layerIndex)
         {
@@ -160,6 +167,10 @@ namespace Character
             GameInput.PlayerActionMap.Fire.performed -= OnFire;
         }
 
+        private void Start()
+        {
+           
+        }
 
     }
 }

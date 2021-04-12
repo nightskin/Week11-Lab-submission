@@ -32,7 +32,7 @@ public class LoadMenuWidget : MenuWidget
     private void SaveDebugData()
     {
         GameDataList dataList = new GameDataList();
-        dataList.SaveFileNames.AddRange(new List<string> {"Save1", "Save2", "Save3"});
+        dataList.SaveFileNames.AddRange(new List<string> {"Save1"});
         PlayerPrefs.SetString(SaveFileKey, JsonUtility.ToJson(dataList));
     }
 
